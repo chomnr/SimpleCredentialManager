@@ -1,7 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using SimpleCredentialManager;
+
 Console.WriteLine("Hello, World!");
 // aes encryption
 
+Credential credential = new Credential();
 
 // create new key / storage
 // import key & storage
