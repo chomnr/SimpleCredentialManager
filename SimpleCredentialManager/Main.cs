@@ -8,10 +8,23 @@ using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 
-AesEncryption encryption = new AesEncryption();
-AesInfo aesInfo = null;
+CredentialObserver observer = new CredentialObserver();
+CredentialWindow window = new CredentialWindow();
 CredentialStore? store = null;
 
+AesEncryption encryption = new AesEncryption();
+AesInfo? aesInfo = null;
+
+
+window.CreateWindow(CredentialWindow.WINDOW.NONE);
+window.UpdateWindow();
+
+//Helper.PrintHeader(encryption.getName());
+
+
+
+
+/*
 Console.WriteLine("  ______  ______  __    __    ");
 Console.WriteLine(" /\\  ___\\/\\  ___\\/\\ \"-./  \\   ");
 Console.WriteLine(" \\ \\___  \\ \\ \\___\\ \\ \\-./\\ \\  ");
@@ -24,6 +37,7 @@ Console.WriteLine("    [2] Import existing key & store\n");
 CredentialObserver observer = new CredentialObserver();
 observer.SetEncryption(encryption);
 
+/*
 while (store == null)
 {
     Console.Write("> ");
@@ -34,7 +48,7 @@ while (store == null)
         if (choice == 1)
         {
             aesInfo = encryption.Create();
-            Console.WriteLine("\n    Created a new key & store. Redirecting...");
+            Console.WriteLine("\n    Created new key & store. Redirecting...");
             Console.Clear();
             store = new CredentialStore();
         }
@@ -63,16 +77,17 @@ while (store != null && aesInfo != null)
     //Console.WriteLine(aesInfo.IV);
     Console.Write("> ");
     //string? username = Console.ReadLine();
-    var encrypted = encryption.Encrypt(new List<Credential>());
-    var decrypted = encryption.Decrypt(Convert.ToBase64String(encrypted));
-    Console.WriteLine(Convert.ToBase64String(encrypted));
-    Console.WriteLine(decrypted);
+    //var encrypted = encryption.Encrypt(new List<Credential>());
+    //var decrypted = encryption.Decrypt(Convert.ToBase64String(encrypted));
+    //Console.WriteLine(Convert.ToBase64String(encrypted));
+    //Console.WriteLine(decrypted);
     break;
 }
 
 //observer.AesBuildAndSave();
 //observer.DecryptThenConvert();
 //observer.EncryptThenConvert();
+*/
 
 
 
@@ -96,6 +111,9 @@ while (store != null && aesInfo != null)
 // First screen
 // [1] = Create new key / storage (exports key after creation) & storage
 // [2] = Import existing key / storage
+
+// color highlighting filtration mode
+// in order to filter by specific things u can do [u:hoar p:312 e:doggy@gmail.com]
 
 // Second screen 
 // [1] Create new Credential
