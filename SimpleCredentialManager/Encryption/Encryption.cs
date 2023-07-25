@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleCredentialManager.Encryption.types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,17 +7,19 @@ using System.Threading.Tasks;
 
 namespace SimpleCredentialManager.Encryption
 {
-    abstract class EncryptionType
+    abstract class CredentialEncryption<T>
     {
-        public string nameOfEncryption;
+        private string nameOfEncryption;
 
-        public EncryptionType(string nameOfEncryption) { 
+        public CredentialEncryption(string nameOfEncryption) { 
             this.nameOfEncryption = nameOfEncryption; 
         }
 
-        protected abstract void Encrypt(List<Credential> credentials);
+        public abstract T Create();
 
-        protected abstract void Decrypt(string key, List<Credential> credentials);
+        public abstract string Encrypt(List<Credential> credentials);
+
+        public abstract List<Credential> Decrypt(string key, string credentials);
 
         public abstract void SetKey(string key);
 

@@ -10,18 +10,12 @@ namespace SimpleCredentialManager
 {
     internal class CredentialObserver
     {
-        private EncryptionType type;
-        private CredentialStore store;
+        private CredentialStore? store = null;
 
         public CredentialObserver() {}
 
-        public CredentialObserver(EncryptionType type, CredentialStore store) { 
-            this.type = type;
+        public CredentialObserver(CredentialStore store) { 
             this.store = store;
-        }
-
-        public void SetEncryption(EncryptionType type) {
-            this.type = type;
         }
 
         public void SetStore(CredentialStore store)
