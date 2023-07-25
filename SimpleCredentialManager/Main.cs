@@ -3,14 +3,13 @@ using SimpleCredentialManager;
 using SimpleCredentialManager.Encryption;
 using SimpleCredentialManager.Encryption.types;
 using System.Collections;
+using System.Drawing;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 
-
-int stage = 0;
-
 AesEncryption encryption = new AesEncryption();
+AesInfo aesInfo = null;
 CredentialStore? store = null;
 
 Console.WriteLine("  ______  ______  __    __    ");
@@ -19,12 +18,11 @@ Console.WriteLine(" \\ \\___  \\ \\ \\___\\ \\ \\-./\\ \\  ");
 Console.WriteLine("  \\/\\_____\\ \\_____\\ \\_\\ \\ \\_\\ ");
 Console.WriteLine("   \\/_____/\\/_____/\\/_/  \\/_/ V.1.0.0 (" + encryption.getName() + ")");
 Console.WriteLine("\n    SimpleCredentialManager");
-Console.WriteLine("\n    [1] Create new key & store.");
-Console.WriteLine("    [2] Import existing key & store.\n");
+Console.WriteLine("\n    [1] Create new key & store");
+Console.WriteLine("    [2] Import existing key & store\n");
 
 CredentialObserver observer = new CredentialObserver();
-//observer.SetEncryption(encryption);
-
+observer.SetEncryption(encryption);
 
 while (store == null)
 {
@@ -35,21 +33,10 @@ while (store == null)
     {
         if (choice == 1)
         {
-            AesInfo test = encryption.Create();
-
-            Console.WriteLine("Generating key.rsa & store.scm...");
-            Console.WriteLine("key: " + test.Key);
-            Console.WriteLine("iv: " + test.IV);
-
-            /*
-            System.Security.Cryptography.Aes test = System.Security.Cryptography.Aes.Create();
-            test.GenerateKey();
-            test.GenerateIV();
-            Console.WriteLine("Generating key.rsa & store.scm...");
-            Console.WriteLine("key: " + Convert.ToBase64String(test.Key) );
-            Console.WriteLine("iv: " + Convert.ToBase64String(test.IV));
-            */
-            break;
+            aesInfo = encryption.Create();
+            Console.WriteLine("\n    Created a new key & store. Redirecting...");
+            Console.Clear();
+            store = new CredentialStore();
         }
 
         if (choice == 2)
@@ -59,6 +46,29 @@ while (store == null)
     }
 }
 
+Console.WriteLine("  ______  ______  __    __    ");
+Console.WriteLine(" /\\  ___\\/\\  ___\\/\\ \"-./  \\   ");
+Console.WriteLine(" \\ \\___  \\ \\ \\___\\ \\ \\-./\\ \\  ");
+Console.WriteLine("  \\/\\_____\\ \\_____\\ \\_\\ \\ \\_\\ ");
+Console.WriteLine("   \\/_____/\\/_____/\\/_/  \\/_/ V.1.0.0 (" + encryption.getName() + ")");
+Console.WriteLine("\n    SimpleCredentialManager");
+Console.WriteLine("\n    [1] Create a new credential");
+Console.WriteLine("    [2] Read a credential");
+Console.WriteLine("    [3] Update a credential");
+Console.WriteLine("    [4] Delete a credential");
+while (store != null && aesInfo != null)
+{
+    //Console.WriteLine(aesInfo.full);
+    //Console.WriteLine(aesInfo.Key);
+    //Console.WriteLine(aesInfo.IV);
+    Console.Write("> ");
+    //string? username = Console.ReadLine();
+    var encrypted = encryption.Encrypt(new List<Credential>());
+    var decrypted = encryption.Decrypt(Convert.ToBase64String(encrypted));
+    Console.WriteLine(Convert.ToBase64String(encrypted));
+    Console.WriteLine(decrypted);
+    break;
+}
 
 //observer.AesBuildAndSave();
 //observer.DecryptThenConvert();

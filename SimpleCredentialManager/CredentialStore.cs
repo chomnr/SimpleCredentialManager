@@ -10,7 +10,7 @@ namespace SimpleCredentialManager
     {
 
         private string entries { get; set; } = String.Empty;
-           
+          
         
         //import
         //export
