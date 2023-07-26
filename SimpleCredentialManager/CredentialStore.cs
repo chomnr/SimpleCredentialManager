@@ -31,6 +31,11 @@ namespace SimpleCredentialManager
             credStore.IndexOf(credential);
         }
 
+        public void DeleteItem(int index)
+        {
+            credStore.RemoveAt(index);
+        }
+
         public void SetPath(string path)
         {
             this.path = path;
@@ -38,12 +43,19 @@ namespace SimpleCredentialManager
 
         public CredentialStoreGUI GetGUI()
         {
-            return new CredentialStoreGUI(); 
+            return new CredentialStoreGUI(this); 
         }
     }
 
     internal class CredentialStoreGUI
     {
+
+        private CredentialStore store { get; set; }
+
+        public CredentialStoreGUI(CredentialStore store)
+        {
+            this.store = store;
+        }
 
         public Credential CreateCreateCredentialPrompt()
         {
@@ -56,6 +68,30 @@ namespace SimpleCredentialManager
             Console.Write("Domain: ");
             string domain = Console.ReadLine();
             return new Credential(username, password, email, domain);
+        }
+
+        public int CreateDeleteCredentialPrompt()
+        {
+            Console.Write("Delete ID: ");
+            string id = Console.ReadLine();
+
+            if (id != null && Int32.TryParse(id, out int idx)) {
+                try {
+                    var data = store.GetStore()[idx];
+                    if (data != null)
+                    {
+                        return idx;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+                catch {
+                    return -1;
+                }
+            }
+            return -1;
         }
     }
 }

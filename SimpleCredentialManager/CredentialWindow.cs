@@ -103,16 +103,62 @@ namespace SimpleCredentialManager
 
             if (RequestedWindow.Equals(WINDOW.MODIFY))
             {
+                /*          CHOICES 
+                     0 = Create Credential
+                     1 = Read Credentials
+                     2 = Update Credential
+                     3 = Delete Credential
+                 */
                 if (Int32.TryParse(Console.ReadLine(), out int choice))
                 {
+                    if (choice == 0)
+                    {
+                        Credential createPrompt = observer.GetStore().GetGUI().CreateCreateCredentialPrompt();
+                        //observer.GetStore().GetStore().Add(promptResult);
+                        //Console.WriteLine(promptResult.Email);
+                        observer.GetStore().AddItem(createPrompt);
+                        var encrypt = observer.GetEncryption().Encrypt(observer.GetStore().GetStore());
+                        File.WriteAllText(observer.GetStore().path, Convert.ToBase64String(encrypt));
+                    }
+
+                    if (choice == 1)
+                    {
+                        var list = observer.GetStore().GetStore();
+                        if (list != null && list.Count != 0)
+                        {
+                            for (int i = 0; i < list.Count; i++)
+                            {
+                                var serialize = JsonSerializer.Serialize(list[i]);
+                                Console.WriteLine("ID: " + i + " " + serialize);
+                            }
+                        }
+                    }
+
+                    if (choice == 2) { }
+
+                    if (choice == 3)
+                    {
+                        int deletePrompt = observer.GetStore().GetGUI().CreateDeleteCredentialPrompt();
+                        if (deletePrompt != -1)
+                        {
+                            observer.GetStore().DeleteItem(deletePrompt);
+                            var encrypt = observer.GetEncryption().Encrypt(observer.GetStore().GetStore());
+                            File.WriteAllText(observer.GetStore().path, Convert.ToBase64String(encrypt));
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid credential id.");
+                        }
+                    }
+                    /*
                     switch (choice)
                     {
                         case 0:
-                            var promptResult = observer.GetStore().GetGUI().CreateCreateCredentialPrompt();
+                            Credential createPrompt = observer.GetStore().GetGUI().CreateCreateCredentialPrompt();
                             //observer.GetStore().GetStore().Add(promptResult);
                             //Console.WriteLine(promptResult.Email);
-                            observer.GetStore().AddItem(promptResult);
-                            var encrypt = observer.GetEncryption().Encrypt(observer.GetStore().GetStore());
+                            observer.GetStore().AddItem(createPrompt);
+                            const byte[] encrypt = observer.GetEncryption().Encrypt(observer.GetStore().GetStore());
                             File.WriteAllText(observer.GetStore().path, Convert.ToBase64String(encrypt));
                             break;
                         case 1:
@@ -120,16 +166,27 @@ namespace SimpleCredentialManager
                             if (list != null && list.Count != 0) {
                                 for (int i = 0; i < list.Count; i++)
                                 {
-                                    Console.WriteLine("{");
-                                    Console.WriteLine("     " + list[i].Username);
-                                    Console.WriteLine("     " + list[i].Password);
-                                    Console.WriteLine("     " + list[i].Email);
-                                    Console.WriteLine("     " + list[i].Domain);
-                                    Console.WriteLine("}");
+                                    var serialize = JsonSerializer.Serialize(list[i]);
+                                    Console.WriteLine("ID: " + i + " " + serialize);
                                 }
                             }
                             break;
+                        case 2:
+                            break;
+                        case 3:
+                            int deletePrompt = observer.GetStore().GetGUI().CreateDeleteCredentialPrompt();
+                            if (deletePrompt != -1)
+                            {
+                                observer.GetStore().DeleteItem(deletePrompt);
+                                const byte[] encrypt = observer.GetEncryption().Encrypt(observer.GetStore().GetStore());
+                                File.WriteAllText(observer.GetStore().path, Convert.ToBase64String(encrypt));
+                            } else
+                            {
+                                Console.WriteLine("Invalid credential id.");
+                            }
+                            break;
                     }
+                    */
                 }
             }
         }
