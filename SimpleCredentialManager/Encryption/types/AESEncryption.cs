@@ -18,18 +18,24 @@ namespace SimpleCredentialManager.Encryption.types
 
         public AesEncryption() : base("AES")
         {
+            aes = Aes.Create();
         }
 
         public override AesInfo Create()
         {
-            aes = Aes.Create();
             aesInfo = new AesInfo(Convert.ToBase64String(aes.Key), Convert.ToBase64String(aes.IV));
             return aesInfo;
         }
 
+        public override void Set(AesInfo t)
+        {
+            aesInfo = t;
+            aes.Key = Convert.FromBase64String(aesInfo.Key);
+            aes.IV = Convert.FromBase64String(aesInfo.IV);
+        }
+
         public override byte[] Encrypt(List<Credential> credentials)
         {
-            credentials.Add(new Credential("asddsasd", "dassad", "asddas@gmail.cokm", "doggy.com"));
             string json = JsonSerializer.Serialize(credentials);
             /*
              * https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes?view=net-7.0 
@@ -88,7 +94,7 @@ namespace SimpleCredentialManager.Encryption.types
 
         public override void SetKey(string key)
         {
-            aesInfo.full = key;
+            aesInfo.Full = key;
         }
     }
 
@@ -96,12 +102,21 @@ namespace SimpleCredentialManager.Encryption.types
     {
         public string Key { get; set; } = String.Empty;
         public string IV { get; set; } = String.Empty;
-        public string full { get; set; } = String.Empty;
+        public string Full { get; set; } = String.Empty;
 
-        public AesInfo(string key, string iv) {
+        public AesInfo(string full) {
+            var split = full.Split(" ");
+
+            this.Key = split[0];
+            this.IV = split[1];
+            this.Full = split[0] + " " + split[1];
+        }
+
+        public AesInfo(string key, string iv)
+        {
             this.Key = key;
             this.IV = iv;
-            this.full = iv + key;
+            this.Full = iv + " " + key;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace SimpleCredentialManager
     {
         public Credential() { }
 
-        public Credential(string username, string password, string email, string domain)
+        public Credential(string? username, string? password, string? email, string? domain)
         {
             this.Username = username;
             this.Password = password;
@@ -19,9 +19,9 @@ namespace SimpleCredentialManager
             this.Domain = domain;
         }
 
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Domain { get; set; } = string.Empty;
+        public string? Username { get; set; } = string.Empty;
+        public string? Password { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
+        public string? Domain { get; set; } = string.Empty;
     }
 }

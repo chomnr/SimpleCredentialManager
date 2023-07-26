@@ -8,24 +8,27 @@ using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
 
-/* AES Encryption */
-AesEncryption encryption = new AesEncryption();
-AesInfo? aesInfo = null;
 
-/* Credential */
-CredentialStore store = new CredentialStore();
-CredentialObserver observer = new CredentialObserver();
-observer.SetStore(store);
-observer.SetEncryption(encryption);
+class Program
+{
+    [STAThread]
+    static void Main(string[] args)
+    {
+        AesEncryption encryption = new AesEncryption();
+        AesInfo? aesInfo = null;
 
-CredentialWindow window = new CredentialWindow(observer);
+        /* Credential */
+        CredentialStore store = new CredentialStore();
+        CredentialObserver observer = new CredentialObserver();
+        observer.SetStore(store);
+        observer.SetEncryption(encryption);
+        CredentialWindow window = new CredentialWindow(observer);
 
-/* Creating Terminal GUI */
-window.CreateWindow(CredentialWindow.WINDOW.NONE);
-window.UpdateWindow();
-
-
-
+        /* Creating Terminal GUI */
+        window.CreateWindow(CredentialWindow.WINDOW.NONE);
+        window.UpdateWindow();
+    }
+}
 
 
 //Helper.PrintHeader(encryption.getName());

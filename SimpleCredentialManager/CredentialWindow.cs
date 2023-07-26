@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SimpleCredentialManager
 {
@@ -15,7 +17,11 @@ namespace SimpleCredentialManager
         public enum WINDOW
         {
             NONE,
-            MODIFY
+            MODIFY,
+            CRED_ADD,
+            CRED_UPDATE,
+            CRED_SEARCH,
+            CRED_DELETE
         }
 
         private CredentialObserver observer { get; set; }
@@ -41,7 +47,7 @@ namespace SimpleCredentialManager
                 currentWindow = RequestedWindow;
             }
 
-            for (; ; )
+            for (;;)
             {
                 CreateWindow(currentWindow);
             }
@@ -78,9 +84,18 @@ namespace SimpleCredentialManager
                             ChangeWindow(WINDOW.MODIFY);
                             break;
                         case 1:
-                            Notify("Failed.");
-                            Thread.Sleep(1500);
-                            ChangeWindow(WINDOW.NONE);
+                            if (LoadFileDialog())
+                            {
+                                Notify("Decrypted contents successfully.");
+                                Thread.Sleep(1500);
+                                ChangeWindow(WINDOW.MODIFY);
+                            }
+                            else
+                            {
+                                Notify("Failed to decrypt contents.");
+                                Thread.Sleep(1500);
+                                ChangeWindow(WINDOW.NONE);
+                            }
                             break;
                     }
                 }
@@ -88,7 +103,34 @@ namespace SimpleCredentialManager
 
             if (RequestedWindow.Equals(WINDOW.MODIFY))
             {
-                Console.ReadLine();
+                if (Int32.TryParse(Console.ReadLine(), out int choice))
+                {
+                    switch (choice)
+                    {
+                        case 0:
+                            var promptResult = observer.GetStore().GetGUI().CreateCreateCredentialPrompt();
+                            //observer.GetStore().GetStore().Add(promptResult);
+                            //Console.WriteLine(promptResult.Email);
+                            observer.GetStore().AddItem(promptResult);
+                            var encrypt = observer.GetEncryption().Encrypt(observer.GetStore().GetStore());
+                            File.WriteAllText(observer.GetStore().path, Convert.ToBase64String(encrypt));
+                            break;
+                        case 1:
+                             var list = observer.GetStore().GetStore();
+                            if (list != null && list.Count != 0) {
+                                for (int i = 0; i < list.Count; i++)
+                                {
+                                    Console.WriteLine("{");
+                                    Console.WriteLine("     " + list[i].Username);
+                                    Console.WriteLine("     " + list[i].Password);
+                                    Console.WriteLine("     " + list[i].Email);
+                                    Console.WriteLine("     " + list[i].Domain);
+                                    Console.WriteLine("}");
+                                }
+                            }
+                            break;
+                    }
+                }
             }
         }
 
@@ -121,6 +163,53 @@ namespace SimpleCredentialManager
             storeName = Console.ReadLine();
 
             return new string[] { keyName, storeName };
+        }
+        
+        public bool LoadFileDialog()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            string key = null;
+            string? store = null;
+
+            string key_filter = "*.scrt|*.scrt";
+            string store_filter = "*.scm|*.scm";
+
+            if (key == null)
+            {
+                Notify("Waiting for .scrt...");
+                openFileDialog.Filter = key_filter;
+                openFileDialog.ShowDialog();
+                key = File.ReadAllText(openFileDialog.FileName);
+                observer.GetEncryption().Set(new AesInfo(key));
+            }
+
+            if (store == null && key != null)
+            {
+                Notify("Waiting for .scm...");
+                openFileDialog.Filter = store_filter;
+                openFileDialog.ShowDialog();
+                observer.GetStore().SetPath(openFileDialog.FileName);
+                try
+                {
+                    string contents = File.ReadAllText(openFileDialog.FileName);
+                    if (!string.IsNullOrEmpty(contents))
+                    {
+                        store = observer.GetEncryption().Decrypt(File.ReadAllText(openFileDialog.FileName));
+                        List<Credential> deserialize = JsonSerializer.Deserialize<List<Credential>>(store);
+                        observer.GetStore().Load(deserialize);
+                    } else
+                    {
+                        observer.GetStore().Load(new List<Credential>());
+                    }
+                } catch(Exception e)
+                {
+                    Notify(e.ToString());
+                    Thread.Sleep(3000);
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
@@ -171,7 +260,7 @@ namespace SimpleCredentialManager
 
         private CommandInstruction[] Modify = {
               new CommandInstruction(0, CredentialWindow.WINDOW.MODIFY, "Create a new credential"),
-              new CommandInstruction(1, CredentialWindow.WINDOW.MODIFY, "Read a credential"),
+              new CommandInstruction(1, CredentialWindow.WINDOW.MODIFY, "Read a credential (append 1 with an * to view all the data) ex: 1*."),
               new CommandInstruction(2, CredentialWindow.WINDOW.MODIFY, "Update a credential"),
               new CommandInstruction(3, CredentialWindow.WINDOW.MODIFY, "Delete a credential")
         };

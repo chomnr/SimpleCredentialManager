@@ -17,6 +17,8 @@ namespace SimpleCredentialManager.Encryption
 
         public abstract T Create();
 
+        public abstract void Set(T t);
+
         public abstract byte[] Encrypt(List<Credential> credentials);
 
         public abstract string Decrypt(string credentials);
