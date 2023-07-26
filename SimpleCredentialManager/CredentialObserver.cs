@@ -28,5 +28,15 @@ namespace SimpleCredentialManager
         {
             this.store = store;
         }
+
+        public CredentialStore GetStore()
+        {
+            return this.store;
+        }
+
+        public CredentialEncryption<AesInfo> GetEncryption()
+        {
+            return this.encryption;
+        }
     }
 }

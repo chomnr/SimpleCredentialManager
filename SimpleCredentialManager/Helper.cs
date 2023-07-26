@@ -8,7 +8,24 @@ namespace SimpleCredentialManager
 {
     internal class Helper
     {
-        public static void CreateFile() {}
+        public static void CreateKeyFile(string fileName, string key, string iv) {
+            using (FileStream fs = File.Create(fileName + ".scrt"))
+            {
+                byte[] info = new UTF8Encoding().GetBytes(key + " " + iv);
+                fs.Write(info, 0, info.Length);
+            }
+        }
+
+        public static void CreateStoreFile(string fileName)
+        {
+            using (FileStream fs = File.Create(fileName + ".scm"))
+            {
+                byte[] info = new UTF8Encoding().GetBytes("");
+                fs.Write(info, 0, info.Length);
+            }
+        }
+
+        public static void SaveFile() { }
 
         public static void PrintHeader()
         {

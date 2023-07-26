@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleCredentialManager.Encryption.types;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -17,8 +18,14 @@ namespace SimpleCredentialManager
             MODIFY
         }
 
+        private CredentialObserver observer { get; set; }
         private WINDOW RequestedWindow { get; set; }
         private bool IsHeaderThere { get; set; } = false;
+
+        public CredentialWindow(CredentialObserver observer)
+        {
+            this.observer = observer;
+        }
 
         public void ChangeWindow(WINDOW windowTarget) {
             RequestedWindow = windowTarget;
@@ -52,14 +59,28 @@ namespace SimpleCredentialManager
 
             if (RequestedWindow == WINDOW.NONE)
             {
+                /*          CHOICES 
+                     0 = Create new key & store
+                     1 = Load key & store
+                 */
                 if (Int32.TryParse(Console.ReadLine(), out int choice))
                 {
                     switch (choice)
                     {
                         case 0:
-                            Notify("Successfully created this.");
+                            string[] fileDialog = CreateFileDialog();
+                            AesInfo aesInfo = observer.GetEncryption().Create();
+                            Helper.CreateKeyFile(fileDialog[0], aesInfo.Key, aesInfo.IV);
+                            Helper.CreateStoreFile(fileDialog[1]);
+                            observer.GetStore().Load(new List<Credential>());
+                            Notify("Successful.");
                             Thread.Sleep(1500);
                             ChangeWindow(WINDOW.MODIFY);
+                            break;
+                        case 1:
+                            Notify("Failed.");
+                            Thread.Sleep(1500);
+                            ChangeWindow(WINDOW.NONE);
                             break;
                     }
                 }
@@ -73,7 +94,7 @@ namespace SimpleCredentialManager
 
         public void Notify(string message) {
             Console.Clear();
-            Console.WriteLine($"{message}");
+            Console.WriteLine($"\n\n    {message}");
         }
 
         public void WipeAndUpdateHeader()
@@ -85,6 +106,21 @@ namespace SimpleCredentialManager
         public void AddCommandStarter()
         {
             Console.Write(COMMAND_STARTER + " ");
+        }
+
+        public string[] CreateFileDialog()
+        {
+            WipeAndUpdateHeader();
+            string keyName = "";
+            string storeName = "";
+
+            Console.Write("key file name: ");
+            keyName = Console.ReadLine();
+
+            Console.Write("store file name: ");
+            storeName = Console.ReadLine();
+
+            return new string[] { keyName, storeName };
         }
     }
 
