@@ -38,18 +38,12 @@ namespace SimpleCredentialManager
 
         public CredentialStoreGUI GetGUI()
         {
-            return new CredentialStoreGUI(this); 
+            return new CredentialStoreGUI(); 
         }
     }
 
     internal class CredentialStoreGUI
     {
-        private CredentialStore store { get; set; }
-
-        public CredentialStoreGUI(CredentialStore store)
-        {
-            this.store = store;
-        }
 
         public Credential CreateCreateCredentialPrompt()
         {
