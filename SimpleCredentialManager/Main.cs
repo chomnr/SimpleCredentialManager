@@ -8,7 +8,6 @@ class Program
     static void Main(string[] args)
     {
         AesEncryption encryption = new AesEncryption();
-        AesInfo? aesInfo = null;
 
         /* Credential */
         CredentialStore store = new CredentialStore();
