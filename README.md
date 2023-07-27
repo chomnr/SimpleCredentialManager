@@ -1,5 +1,4 @@
 # SimpleCredentialManager
-----------------------------------------------------------------
 
 View Preview<br>
 [https://www.youtube.com/watch?v=MOxt6Icv19Q
