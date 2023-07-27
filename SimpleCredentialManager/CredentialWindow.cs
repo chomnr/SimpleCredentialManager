@@ -74,6 +74,7 @@ namespace SimpleCredentialManager
                             AesInfo aesInfo = observer.GetEncryption().Create();
                             Helper.CreateKeyFile(fileDialog[0], aesInfo.Key, aesInfo.IV);
                             Helper.CreateStoreFile(fileDialog[1]);
+                            observer.GetStore().SetPath(fileDialog[1]);
                             observer.GetStore().Load(new List<Credential>());
                             Notify("Successful.");
                             Thread.Sleep(1500);
