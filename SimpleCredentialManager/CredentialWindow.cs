@@ -291,7 +291,7 @@ namespace SimpleCredentialManager
 
         private CommandInstruction[] Modify = {
               new CommandInstruction(0, CredentialWindow.WINDOW.MODIFY, "Create a new credential"),
-              new CommandInstruction(1, CredentialWindow.WINDOW.MODIFY, "Read a credential (append 1 with an * to view all the data) ex: 1*."),
+              new CommandInstruction(1, CredentialWindow.WINDOW.MODIFY, "Read a credential"),
               new CommandInstruction(2, CredentialWindow.WINDOW.MODIFY, "Update a credential"),
               new CommandInstruction(3, CredentialWindow.WINDOW.MODIFY, "Delete a credential")
         };
